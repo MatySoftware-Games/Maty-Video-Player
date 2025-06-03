@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Scratch-like Blocks with Car</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .editor {
+      background-color: #e6e6e6;
+      width: 95%;
+      max-width: 1000px;
+      border-radius: 8px;
+      padding: 20px;
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    h1 {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    #toolbox {
+      background: #d0e1ff;
+      border-radius: 8px;
+      padding: 10px;
+      max-width: 600px;
+      min-width: 300px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-start;
+      align-content: flex-start;
+      height: 350px;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    .block {
+      background-color: #4c97ff;
+      color: white;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      cursor: grab;
+      user-select: none;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+      font-weight: bold;
+      font-size: 16px;
+      gap: 8px;
+      min-width: 140px;
+      max-width: 160px;
+      flex-shrink: 0;
+      flex-wrap: nowrap;
+    }
+    .block input {
+      width: 50px;
+      text-align: center;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .block:hover {
+      background-color: #4287e6;
+    }
+    .workspace {
+      background-color: #ffffff;
+      border: 2px dashed #cccccc;
+      border-radius: 8px;
+      min-height: 320px;
+      width: 320px;
+      padding: 10px;
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+    #buttons {
+      width: 100%;
+      text-align: center;
+      margin: 15px 0 20px 0;
+      flex-basis: 100%;
+    }
+    #runButton, #clearButton {
+      display: inline-block;
+      margin: 0 10px;
+      padding: 10px 24px;
+      background-color: #5cb85c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
+    }
+    #clearButton {
+      background-color: #d9534f;
+    }
+    #runButton:hover {
+      background-color: #4cae4c;
+    }
+    #clearButton:hover {
+      background-color: #c9302c;
+    }
+    #scene {
+      background-color: #fff;
+      border: 2px solid #333;
+      border-radius: 8px;
+      width: 400px;
+      height: 300px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    #car {
+      width: 50px;
+      height: 30px;
+      background-color: red;
+      border-radius: 5px;
+      position: absolute;
+      top: 135px;
+      left: 175px;
+      transform-origin: center center;
+      transform: rotate(0deg);
+      transition: all 0.3s ease;
+    }
+    #speechBubble {
+      position: absolute;
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ffffff;
+      color: #000;
+      border: 1px solid #333;
+      border-radius: 10px;
+      padding: 5px 10px;
+      min-width: 80px;
+      text-align: center;
+      display: none;
+      font-size: 14px;
+      box-shadow: 2px 2px 6px rgba(0,0,0,0.2);
+      white-space: nowrap;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="editor">
+    <h1>Maty Block Game</h1>
+    <div id="toolbox" aria-label="Block toolbox" role="list">
+      <div class="block" draggable="true" data-command="move" role="listitem" tabindex="0">
+        Move <input type="number" value="10" aria-label="Steps to move" /> Steps
+      </div>
+      <div class="block" draggable="true" data-command="turn" role="listitem" tabindex="0">
+        Turn Right <input type="number" value="15" aria-label="Degrees to turn" />°
+      </div>
+      <div class="block" draggable="true" data-command="say" role="listitem" tabindex="0">
+        Say "<input type="text" value="Hello!" aria-label="Message to say" />"
+      </div>
+      <div class="block" draggable="true" data-command="repeat" role="listitem" tabindex="0">
+        Repeat <input type="number" value="3" aria-label="Repeat times" /> Times
+      </div>
+      <div class="block" draggable="true" data-command="show" role="listitem" tabindex="0">
+        Show Car
+      </div>
+      <div class="block" draggable="true" data-command="hide" role="listitem" tabindex="0">
+        Hide Car
+      </div>
+      <div class="block" draggable="true" data-command="color" role="listitem" tabindex="0">
+        Change Color
+      </div>
+      <div class="block" draggable="true" data-command="moveBack" role="listitem" tabindex="0">
+        Move Backward <input type="number" value="10" aria-label="Steps to move backward" /> Steps
+      </div>
+      <div class="block" draggable="true" data-command="turnLeft" role="listitem" tabindex="0">
+        Turn Left <input type="number" value="15" aria-label="Degrees to turn left" />°
+      </div>
+      <div class="block" draggable="true" data-command="wait" role="listitem" tabindex="0">
+        Wait <input type="number" value="1" aria-label="Seconds to wait" /> Seconds
+      </div>
+    </div>
+    <div class="workspace" id="workspace" aria-label="Workspace for blocks" role="list">
+      <p>Drag blocks here!</p>
+    </div>
+    <div id="buttons">
+      <button id="runButton" aria-label="Run the script">Run Script</button>
+      <button id="clearButton" aria-label="Clear all blocks">Clear Workspace</button>
+    </div>
+    <div id="scene" aria-label="Scene with car">
+      <div id="car" aria-label="Car"></div>
+      <div id="speechBubble" role="alert"></div>
+    </div>
+  </div>
+
+  <script>
+    const blocks = document.querySelectorAll('#toolbox .block');
+    const workspace = document.getElementById('workspace');
+    const runButton = document.getElementById('runButton');
+    const clearButton = document.getElementById('clearButton');
+    const car = document.getElementById('car');
+    const speechBubble = document.getElementById('speechBubble');
+    let position = { x: 175, y: 135 };
+    let angle = 0;
+
+    blocks.forEach(block => {
+      block.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('command', block.dataset.command);
+        e.dataTransfer.setData('html', block.innerHTML);
+      });
+      // Support keyboard drag via Enter key for accessibility - optional
+    });
+
+    workspace.addEventListener('dragover', e => {
+      e.preventDefault();
+    });
+
+    workspace.addEventListener('drop', e => {
+      e.preventDefault();
+      const command = e.dataTransfer.getData('command');
+      const innerHTML = e.dataTransfer.getData('html');
+      const newBlock = document.createElement('div');
+      newBlock.classList.add('block');
+      newBlock.setAttribute('data-command', command);
+      newBlock.innerHTML = innerHTML;
+      const inputs = newBlock.querySelectorAll('input');
+      inputs.forEach(input => input.disabled = false);
+      if (workspace.querySelector('p')) {
+        workspace.querySelector('p').remove();
+      }
+      workspace.appendChild(newBlock);
+    });
+
+    runButton.addEventListener('click', async () => {
+      position = { x: 175, y: 135 };
+      angle = 0;
+      car.style.left = `${position.x}px`;
+      car.style.top = `${position.y}px`;
+      car.style.transform = `rotate(${angle}deg)`;
+      car.style.backgroundColor = 'red';
+      car.style.display = 'block';
+      speechBubble.style.display = 'none';
+
+      const blocksInWorkspace = [...workspace.querySelectorAll('.block')];
+      await runBlocks(blocksInWorkspace, 0, blocksInWorkspace.length);
+    });
+
+    clearButton.addEventListener('click', () => {
+      workspace.innerHTML = '<p>Drag blocks here!</p>';
+    });
+
+    async function runBlocks(blocksArray, startIndex, endIndex) {
+      for(let i = startIndex; i < endIndex; i++) {
+        const block = blocksArray[i];
+        const command = block.dataset.command;
+        const inputs = block.querySelectorAll('input');
+        let value = inputs.length > 0 ? inputs[0].value : '';
+
+        if (command === 'move') {
+          const moveValue = parseInt(value);
+          if (isNaN(moveValue)) continue;
+          const rad = angle * Math.PI / 180;
+          position.x += moveValue * Math.cos(rad);
+          position.y += moveValue * Math.sin(rad);
+          car.style.left = `${position.x}px`;
+          car.style.top = `${position.y}px`;
+          await delay(500);
+        } else if (command === 'moveBack') {
+          const moveValue = parseInt(value);
+          if (isNaN(moveValue)) continue;
+          const rad = angle * Math.PI / 180;
+          position.x -= moveValue * Math.cos(rad);
+          position.y -= moveValue * Math.sin(rad);
+          car.style.left = `${position.x}px`;
+          car.style.top = `${position.y}px`;
+          await delay(500);
+        } else if (command === 'turn') {
+          const turnValue = parseInt(value);
+          if (isNaN(turnValue)) continue;
+          angle += turnValue;
+          car.style.transform = `rotate(${angle}deg)`;
+          await delay(500);
+        } else if (command === 'turnLeft') {
+          const turnValue = parseInt(value);
+          if (isNaN(turnValue)) continue;
+          angle -= turnValue;
+          car.style.transform = `rotate(${angle}deg)`;
+          await delay(500);
+        } else if (command === 'say') {
+          speechBubble.textContent = value;
+          speechBubble.style.display = 'block';
+          await delay(1500);
+          speechBubble.style.display = 'none';
+        } else if (command === 'repeat') {
+          const repeatTimes = parseInt(value);
+          if (isNaN(repeatTimes) || repeatTimes < 1) continue;
+          // Find blocks to repeat (until next repeat or end)
+          let repeatStart = i + 1;
+          let repeatEnd = repeatStart;
+          while (repeatEnd < endIndex && blocksArray[repeatEnd].dataset.command !== 'repeat') {
+            repeatEnd++;
+          }
+          for(let r = 0; r < repeatTimes; r++) {
+            await runBlocks(blocksArray, repeatStart, repeatEnd);
+          }
+          i = repeatEnd - 1; // skip repeated blocks
+        } else if (command === 'show') {
+          car.style.display = 'block';
+          await delay(500);
+        } else if (command === 'hide') {
+          car.style.display = 'none';
+          await delay(500);
+        } else if (command === 'color') {
+          car.style.backgroundColor = getRandomColor();
+          await delay(500);
+        } else if (command === 'wait') {
+          const waitSecs = parseFloat(value);
+          if (isNaN(waitSecs) || waitSecs < 0) continue;
+          await delay(waitSecs * 1000);
+        }
+      }
+    }
+
+    function delay(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function getRandomColor() {
+      const letters = '0123456789ABCDEF';
+      let color = '#';
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+  </script>
+</body>
+</html>
+<!-- partial -->
+  
+</body>
+</html>
